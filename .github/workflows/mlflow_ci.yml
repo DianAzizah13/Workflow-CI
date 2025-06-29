@@ -47,7 +47,7 @@ jobs:
         name: model-artifacts
         path: /home/runner/.mlflow/artifacts
         
-build-docker:
+  build-docker:
     needs: run-mlflow
     runs-on: ubuntu-latest
 

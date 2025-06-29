@@ -25,12 +25,14 @@ jobs:
         conda-solver: libmamba
 
     - name: Install MLflow
+      shell: bash -l {0} 
       run: |
         conda activate mlflow-env
         pip install mlflow
 
     - name: Run MLflow Project
-      shell: bash -l {0}  # <- login shell agar "conda activate" bisa dipakai
+      shell: bash -l {0}  
       run: |
         conda activate mlflow-env
+        mlflow run ./MLProject --env-manager=local
         mlflow run ./MLProject --env-manager=local

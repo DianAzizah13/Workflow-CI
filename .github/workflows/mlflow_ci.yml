@@ -19,16 +19,18 @@ jobs:
       with:
         python-version: 3.9
         activate-environment: mlflow-env
+        environment-file: MLProject/conda.yaml
         auto-update-conda: true
         auto-activate-base: false
         conda-solver: libmamba
-        clean-patched-environment-file: true
 
     - name: Install MLflow
       run: |
-        conda install -n mlflow-env pip -y
+        conda activate mlflow-env
         pip install mlflow
 
     - name: Run MLflow Project
+      shell: bash -l {0}  # <- login shell agar "conda activate" bisa dipakai
       run: |
-        mlflow run ./MLProject --env-manager=conda
+        conda activate mlflow-env
+        mlflow run ./MLProject --env-manager=local

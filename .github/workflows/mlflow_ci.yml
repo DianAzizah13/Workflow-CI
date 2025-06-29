@@ -4,7 +4,7 @@ on:
   push:
     paths:
       - 'MLProject/**'
-      - '.github/workflows/mlflow_ci.yml'
+      - '.github/workflows/mlflow_retrain.yml'
 
 jobs:
   retrain:
@@ -14,40 +14,18 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.9'
-
     - name: Set up Conda
       uses: conda-incubator/setup-miniconda@v2
       with:
         auto-activate-base: false
-        environment-file: MLProject/conda.yaml
-        activate-environment: crop-env
+        python-version: 3.9
 
-    - name: Install mlflow
+    - name: Create Conda Env
       run: |
-        pip install mlflow
+        conda env create -f MLProject/conda.yaml
+        source ~/miniconda3/etc/profile.d/conda.sh
+        conda activate crop-env
 
-    - name: Run MLflow project
-      run: |
+        # Jalankan MLflow Project
         cd MLProject
         mlflow run .
-
-    - name: Upload Artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: mlruns
-        path: MLProject/mlruns/
-
-    - name: Build and Push Docker Image
-      env:
-        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-      run: |
-        # Sesuaikan path model dan Docker tag
-        MODEL_PATH=$(ls -d MLProject/mlruns/*/*/artifacts/model | head -n 1)
-        mlflow models build-docker -m $MODEL_PATH -n $DOCKER_USERNAME/crop-recommendation:latest
-        echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
-        docker push $DOCKER_USERNAME/crop-recommendation:latest

@@ -1,10 +1,11 @@
-FROM continuumio/miniconda3
+# Dockerfile
+FROM python:3.9-slim
 
-COPY . /app
 WORKDIR /app
 
-RUN conda env create -f conda.yaml
+COPY . /app
 
-ENV PATH /opt/conda/envs/crop-env/bin:$PATH
+RUN pip install --no-cache-dir mlflow scikit-learn pandas
 
-CMD ["python", "modelling.py"]
+# Ganti "modelling.py" jika script entry point-nya beda
+ENTRYPOINT ["python", "MLProject/modelling.py"]

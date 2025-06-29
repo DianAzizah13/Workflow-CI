@@ -11,10 +11,10 @@ def main():
     mlflow.sklearn.autolog(log_input_examples=True, log_model_signatures=True)
 
     try:
-        X_train = pd.read_csv("Code/Eksperimen_SML/preprocessing/data_preprocessing/X_train.csv")
-        X_test = pd.read_csv("Code/Eksperimen_SML/preprocessing/data_preprocessing/X_test.csv")
-        y_train = pd.read_csv("Code/Eksperimen_SML/preprocessing/data_preprocessing/y_train.csv").values.ravel()
-        y_test = pd.read_csv("Code/Eksperimen_SML/preprocessing/data_preprocessing/y_test.csv").values.ravel()
+        X_train = pd.read_csv("data_preprocessing/X_train.csv")
+        X_test = pd.read_csv("data_preprocessing/X_test.csv")
+        y_train = pd.read_csv("data_preprocessing/y_train.csv").values.ravel()
+        y_test = pd.read_csv("data_preprocessing/y_test.csv").values.ravel()
     except FileNotFoundError as e:
         print(f"Error: {e}")
         exit()

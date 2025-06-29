@@ -5,7 +5,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 
 def main():
-    mlflow.set_tracking_uri("http://127.0.0.1:5001/")
+    
     mlflow.set_experiment("Crop Recommendation - Random Forest")
 
     mlflow.sklearn.autolog(log_input_examples=True, log_model_signatures=True)
@@ -28,8 +28,6 @@ def main():
 
         print(f"[Without Tuning] Accuracy: {acc:.4f}")
         print("\nMLflow autologging selesai.")
-        print(f"Cek UI MLflow di {mlflow.get_tracking_uri()} untuk melihat hasilnya.")
-
 
 if __name__ == "__main__":
     main()

@@ -18,16 +18,15 @@ def main():
     except FileNotFoundError as e:
         print(f"Error: {e}")
         exit()
+    
+    rf = RandomForestClassifier(random_state=42)
+    rf.fit(X_train, y_train)
+    
+    preds = rf.predict(X_test)
+    acc = accuracy_score(y_test, preds)
 
-    with mlflow.start_run(run_name="RF_Without_Tuning"):
-        rf = RandomForestClassifier(random_state=42)
-        rf.fit(X_train, y_train)
-
-        preds = rf.predict(X_test)
-        acc = accuracy_score(y_test, preds)
-
-        print(f"[Without Tuning] Accuracy: {acc:.4f}")
-        print("\nMLflow autologging selesai.")
+    print(f"[Without Tuning] Accuracy: {acc:.4f}")
+    print("\nMLflow autologging selesai.")
 
 if __name__ == "__main__":
     main()

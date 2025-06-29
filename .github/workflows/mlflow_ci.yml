@@ -50,7 +50,10 @@ jobs:
     - name: Install MLflow (latest)
       run: |
         pip install --upgrade pip
-        pip install mlflow==2.12.1
+        pip install --no-cache-dir --force-reinstall mlflow==2.12.1
+
+    - name: Check MLflow version
+      run: mlflow --version
 
     - name: Build Docker Image
       run: |

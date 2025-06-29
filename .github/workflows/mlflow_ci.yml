@@ -1,31 +1,30 @@
-name: Retrain Crop Model on Push
+name: Run MLFlow Project
 
 on:
   push:
-    paths:
-      - 'MLProject/**'
-      - '.github/workflows/mlflow_retrain.yml'
+    branches: [main]
 
 jobs:
-  retrain:
+  run-mlflow:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
+    - name: Checkout Repo
       uses: actions/checkout@v3
 
-    - name: Set up Conda
-      uses: conda-incubator/setup-miniconda@v2
+    - name: Set up Miniconda
+      uses: conda-incubator/setup-miniconda@v3
       with:
-        auto-activate-base: false
-        python-version: 3.9
+        auto-update-conda: true
+        activate-environment: ""
+        python-version: "3.9"
 
-    - name: Create Conda Env
+    - name: Set MLFLOW_CONDA_HOME
+      run: echo "MLFLOW_CONDA_HOME=$(dirname $(dirname $(which conda)))" >> $GITHUB_ENV
+
+    - name: Install MLflow
+      run: pip install mlflow
+
+    - name: Run MLflow Project
       run: |
-        conda env create -f MLProject/conda.yaml
-        source ~/miniconda3/etc/profile.d/conda.sh
-        conda activate crop-env
-
-        # Jalankan MLflow Project
-        cd MLProject
-        mlflow run .
+        mlflow run . --env-manager=conda

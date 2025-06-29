@@ -1,29 +1,33 @@
-name: Run MLFlow Project
+name: Run MLflow with Conda
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
-  run-mlflow:
+  mlflow-run:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Repo
+    - name: Checkout repository
       uses: actions/checkout@v3
 
     - name: Set up Miniconda
       uses: conda-incubator/setup-miniconda@v3
       with:
+        python-version: 3.9
+        activate-environment: mlflow-env
         auto-update-conda: true
-        activate-environment: ""
-        python-version: "3.9"
-
-    - name: Set MLFLOW_CONDA_HOME
-      run: echo "MLFLOW_CONDA_HOME=$(dirname $(dirname $(which conda)))" >> $GITHUB_ENV
+        auto-activate-base: false
+        conda-solver: libmamba
+        clean-patched-environment-file: true
 
     - name: Install MLflow
-      run: pip install mlflow
+      run: |
+        conda install -n mlflow-env pip -y
+        pip install mlflow
 
     - name: Run MLflow Project
       run: |

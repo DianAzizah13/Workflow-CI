@@ -47,21 +47,13 @@ jobs:
       with:
         python-version: 3.9
 
-    - name: Install MLflow (latest)
-      run: |
-        pip install --upgrade pip
-        pip install --no-cache-dir --force-reinstall mlflow==2.12.1
-
-    - name: Check MLflow version
-      run: mlflow --version
-
     - name: Build Docker Image
       run: |
         docker build -t crop-recommendation-image .
-  
+
     - name: Log in to Docker Hub
       run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-  
+
     - name: Push Docker Image
       run: |
         docker tag crop-recommendation-image ${{ secrets.DOCKER_USERNAME }}/crop-recommendation-image:latest

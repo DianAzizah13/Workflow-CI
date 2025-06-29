@@ -24,6 +24,11 @@ jobs:
         auto-activate-base: false
         conda-solver: libmamba
 
+    - name: Install dependencies
+      run: |
+        conda install -n mlflow-env pip -y
+        conda run -n mlflow-env pip install mlflow scikit-learn pandas
+        
     - name: Install MLflow
       shell: bash -l {0} 
       run: |
@@ -35,4 +40,38 @@ jobs:
       run: |
         conda activate mlflow-env
         mlflow run ./MLProject --env-manager=local
-        mlflow run ./MLProject --env-manager=local
+
+    - name: Upload artifacts (to GitHub)
+      uses: actions/upload-artifact@v4
+      with:
+        name: model-artifacts
+        path: /home/runner/.mlflow/artifacts
+        
+build-docker:
+    needs: run-mlflow
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.9
+
+    - name: Install MLflow
+      run: |
+        pip install mlflow
+
+    - name: Build Docker Image
+      run: |
+        mlflow build-docker -n crop-recommendation-image -f MLProject
+
+    - name: Log in to Docker Hub
+      run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+    - name: Push Docker Image
+      run: |
+        docker tag crop-recommendation-image ${{ secrets.DOCKER_USERNAME }}/crop-recommendation-image:latest
+        docker push ${{ secrets.DOCKER_USERNAME }}/crop-recommendation-image:latest
